@@ -329,21 +329,21 @@ typedef struct
 	} XrmOption;
 
 XrmOption xrmOptions[] =
-	{ { xrm_String, "key",         { .str = &config_menu_key       } }
-	, { xrm_String, "dkey",        { .str = &config_menu_dkey      } }
-	, { xrm_Number, "width",       { .num = &config_menu_width     } }
-	, { xrm_Number, "lines",       { .num = &config_menu_lines     } }
-	, { xrm_String, "font",        { .str = &config_menu_font      } }
-	, { xrm_String, "foreground",  { .str = &config_menu_fg        } }
-	, { xrm_String, "background",  { .str = &config_menu_bg        } }
-	, { xrm_String, "alternatebg", { .str = &config_menu_bgalt     } }
-	, { xrm_String, "highlightfg", { .str = &config_menu_hlfg      } }
-	, { xrm_String, "highlightbg", { .str = &config_menu_hlbg      } }
-	, { xrm_String, "bordercolor", { .str = &config_menu_bc        } }
-	, { xrm_Number, "release",     { .num = &config_menu_mod       } }
-	, { xrm_Number, "startindex",  { .num = &config_menu_idx       } }
-	, { xrm_Number, "borderwidth", { .num = &config_menu_bw        } }
-	, { xrm_Number, "opacity",     { .num = &config_window_opacity } }
+	{ { xrm_String, "key",             { .str = &config_menu_key                  } }
+	, { xrm_String, "dkey",            { .str = &config_menu_dkey                 } }
+	, { xrm_Number, "width",           { .num = &config_menu_width                } }
+	, { xrm_Number, "lines",           { .num = &config_menu_lines                } }
+	, { xrm_String, "font",            { .str = &config_menu_font                 } }
+	, { xrm_String, "foreground",      { .str = &config_menu_fg                   } }
+	, { xrm_String, "background",      { .str = &config_menu_bg                   } }
+	, { xrm_String, "alternatebg",     { .str = &config_menu_bgalt                } }
+	, { xrm_String, "highlightfg",     { .str = &config_menu_hlfg                 } }
+	, { xrm_String, "highlightbg",     { .str = &config_menu_hlbg                 } }
+	, { xrm_String, "bordercolor",     { .str = &config_menu_bc                   } }
+	, { xrm_Number, "release",         { .num = &config_menu_mod                  } }
+	, { xrm_Number, "startindex",      { .num = &config_menu_idx                  } }
+	, { xrm_Number, "borderwidth",     { .num = &config_menu_bw                   } }
+	, { xrm_Number, "opacity",         { .num = &config_window_opacity            } }
 	, { xrm_Number, "unfocusedOpacity", { .num = &config_window_opacity_unfocused } }
 	};
 
@@ -1123,21 +1123,21 @@ int main(int argc, char *argv[])
 		free ( name ); free ( class );
 	}
 
-	find_arg_str(ac, av, "-key",     &config_menu_key       );
-	find_arg_str(ac, av, "-dkey",    &config_menu_dkey      );
-	find_arg_int(ac, av, "-width",   &config_menu_width     );
-	find_arg_int(ac, av, "-lines",   &config_menu_lines     );
-	find_arg_str(ac, av, "-font",    &config_menu_font      );
-	find_arg_str(ac, av, "-fg",      &config_menu_fg        );
-	find_arg_str(ac, av, "-bg",      &config_menu_bg        );
-	find_arg_str(ac, av, "-bgalt",   &config_menu_bgalt     );
-	find_arg_str(ac, av, "-hlfg",    &config_menu_hlfg      );
-	find_arg_str(ac, av, "-hlbg",    &config_menu_hlbg      );
-	find_arg_str(ac, av, "-bc",      &config_menu_bc        );
-	find_arg_int(ac, av, "-release", &config_menu_mod       );
-	find_arg_int(ac, av, "-index",   &config_menu_idx       );
-	find_arg_int(ac, av, "-bw",      &config_menu_bw        );
-	find_arg_int(ac, av, "-o",       &config_window_opacity );
+	find_arg_str(ac, av, "-key",     &config_menu_key                 );
+	find_arg_str(ac, av, "-dkey",    &config_menu_dkey                );
+	find_arg_int(ac, av, "-width",   &config_menu_width               );
+	find_arg_int(ac, av, "-lines",   &config_menu_lines               );
+	find_arg_str(ac, av, "-font",    &config_menu_font                );
+	find_arg_str(ac, av, "-fg",      &config_menu_fg                  );
+	find_arg_str(ac, av, "-bg",      &config_menu_bg                  );
+	find_arg_str(ac, av, "-bgalt",   &config_menu_bgalt               );
+	find_arg_str(ac, av, "-hlfg",    &config_menu_hlfg                );
+	find_arg_str(ac, av, "-hlbg",    &config_menu_hlbg                );
+	find_arg_str(ac, av, "-bc",      &config_menu_bc                  );
+	find_arg_int(ac, av, "-release", &config_menu_mod                 );
+	find_arg_int(ac, av, "-index",   &config_menu_idx                 );
+	find_arg_int(ac, av, "-bw",      &config_menu_bw                  );
+	find_arg_int(ac, av, "-o",       &config_window_opacity           );
 	find_arg_int(ac, av, "-ufo",     &config_window_opacity_unfocused );
 
 	// flags to run immediately and exit
