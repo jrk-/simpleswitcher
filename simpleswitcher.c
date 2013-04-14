@@ -313,6 +313,7 @@ unsigned int
 	, config_window_placement
 	, config_menu_bw = 1
 	, config_window_opacity = 100
+	, config_window_opacity_unfocused = 75
 	, config_menu_mod = 0
 	, config_menu_idx = 1
 	;
@@ -343,6 +344,7 @@ XrmOption xrmOptions[] =
 	, { xrm_Number, "startindex",  { .num = &config_menu_idx       } }
 	, { xrm_Number, "borderwidth", { .num = &config_menu_bw        } }
 	, { xrm_Number, "opacity",     { .num = &config_window_opacity } }
+	, { xrm_Number, "unfocusedOpacity", { .num = &config_window_opacity_unfocused } }
 	};
 
 // allocate a pixel value for an X named color
@@ -608,7 +610,7 @@ void menu_draw(textbox *text, textbox **boxes, int max_lines, int selected, char
 	}
 }
 
-int menu(char **lines, char **input, char *prompt, int selected, Time *time)
+int menu(char **lines, Window * windows, char **input, char *prompt, int selected, Time *time)
 {
 	int line = -1, i, j, chosen = 0, aborted = 0, ignorerelease = ! config_menu_mod;
 	workarea mon; monitor_active(&mon);
@@ -684,11 +686,20 @@ int menu(char **lines, char **input, char *prompt, int selected, Time *time)
 	XMoveResizeWindow(display, box, x, y, w, h);
 	XMapRaised(display, box);
 
+	unsigned int focused = OPAQUE,
+	             unfocused = (config_window_opacity_unfocused/100.0) * OPAQUE;
+
 	take_keyboard(box);
 	for (;;)
 	{
 		XEvent ev;
 		XNextEvent(display, &ev);
+
+		for (i = 0; i < max_lines; i++) {
+			XChangeProperty(display, windows[i], XInternAtom(display, OPACITY, False),
+			                XA_CARDINAL, 32, PropModeReplace,
+			                (unsigned char *) (i==selected?&focused:&unfocused), 1L);
+		}
 
 		if (ev.type == Expose)
 		{
@@ -783,6 +794,13 @@ int menu(char **lines, char **input, char *prompt, int selected, Time *time)
 			}
 		}
 	}
+
+	for (i = 0; i < max_lines; i++) {
+		XChangeProperty(display, windows[i], XInternAtom(display, OPACITY, False),
+							 XA_CARDINAL, 32, PropModeReplace,
+							 (unsigned char *) &focused, 1L);
+	}
+
 	release_keyboard();
 
 	if (chosen && filtered[selected])
@@ -832,7 +850,7 @@ void run_switcher(int mode, int fmode)
 		char pattern[50], **list = NULL;
 		int i, classfield = 0, plen = 0, lines = 0;
 		unsigned long desktops = 0, current_desktop = 0;
-		Window w; client *c;
+		Window w; client *c; Window * windows;
 
 		// windows we actually display. may be slightly different to _NET_CLIENT_LIST_STACKING
 		// if we happen to have a window destroyed while we're working...
@@ -874,7 +892,9 @@ void run_switcher(int mode, int fmode)
 				plen += sprintf(pattern+plen, "%%-%ds  ", desktops < 10 ? 1: 2);
 			}
 			plen += sprintf(pattern+plen, "%%-%ds   %%s", MAX(5, classfield));
-			list = allocate_clear(sizeof(char*) * (ids->len+1)); lines = 0;
+			list = allocate_clear(sizeof(char*) * (ids->len+1));
+			windows = allocate_clear(sizeof(Window) * (ids->len+1));
+			lines = 0;
 
 			// build the actual list
 			winlist_ascend(ids, i, w)
@@ -897,12 +917,16 @@ void run_switcher(int mode, int fmode)
 						sprintf(line, pattern, desktop, c->class, c->title);
 					}
 					else	sprintf(line, pattern, c->class, c->title);
-					list[lines++] = line;
+
+					list[lines] = line;
+					windows[lines] = c->window;
+					++lines;
 				}
 			}
 			char *input = NULL;
 			Time time;
-			int n = menu(list, &input, "> ", config_menu_idx, &time);
+			int n = menu(list, windows, &input, "> ", config_menu_idx, &time);
+
 			if (n >= 0 && list[n])
 			{
 				if (mode == ALLWINDOWS && isdigit(list[n][0]))
@@ -924,6 +948,7 @@ void run_switcher(int mode, int fmode)
 			for (i = 0; i < lines; i++)
 				free(list[i]);
 			free(list);
+			free(windows);
 		}
 		free(wins);
 		winlist_free(ids);
@@ -1113,6 +1138,7 @@ int main(int argc, char *argv[])
 	find_arg_int(ac, av, "-index",   &config_menu_idx       );
 	find_arg_int(ac, av, "-bw",      &config_menu_bw        );
 	find_arg_int(ac, av, "-o",       &config_window_opacity );
+	find_arg_int(ac, av, "-ufo",     &config_window_opacity_unfocused );
 
 	// flags to run immediately and exit
 	if (find_arg(ac, av, "-now") >= 0)
